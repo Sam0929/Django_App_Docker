@@ -19,29 +19,18 @@ jobs:
     - name: Create .env file for tests
       run: |
         cat > .env << EOF
-        # Database Configuration
-        DB_ENGINE=django.db.backends.mysql
-        DB_NAME=django_test
-        DB_USER=django_user
-        DB_PASSWORD=django_pass
+        # Configurações do Django
+        DEBUG=True
+        SECRET_KEY=your_secret_key
+        DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,coinflip.com,www.coinflip.com
+
+        # Configurações do Banco de Dados
+        DB_NAME=Django_APP
+        DB_USER=django
+        DB_PASSWORD=your_password
         DB_HOST=db
         DB_PORT=3306
-        MYSQL_ROOT_PASSWORD=rootpassword
-        
-        # Django Configuration
-        SECRET_KEY=test-secret-key-change-in-production
-        DEBUG=True
-        DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,web
-        
-        # Email Configuration
-        EMAIL_USER=test@example.com
-        EMAIL_PASSWORD=testpassword
-        
-        # Social Auth Configuration
-        GITHUB_KEY=test_github_key
-        GITHUB_SECRET=test_github_secret
-        GOOGLE_KEY=test_google_key
-        GOOGLE_SECRET=test_google_secret
+        MYSQL_ROOT_PASSWORD=your_root_password
         EOF
     
     - name: Start containers with docker-compose
