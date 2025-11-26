@@ -36,6 +36,7 @@ jobs:
     - name: Start containers with docker-compose
       run: |
         docker compose up -d
+        docker cp ./app/Projeto_1_Nuvem/default.jpg coinflip_web:/app/mediafiles/default.jpg
     
     - name: Wait for MySQL to be ready
       run: |
