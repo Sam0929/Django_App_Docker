@@ -41,7 +41,7 @@ jobs:
       run: |
         for i in {1..60}; do
           echo "Tentativa $i/60..."
-          docker compose exec -T db sh -c 'mysqladmin ping -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" --silent' && break
+          docker compose exec -T db sh -c 'mysqladmin ping -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" ' && break
           sleep 2
         done
       timeout-minutes: 3
@@ -51,7 +51,7 @@ jobs:
     
     - name: Grant permissions to Django user
       run: |
-        docker compose exec -T db mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" << EOF
+        docker compose exec -T db mysql -h localhost -u root -p"your_root_password" << EOF
         CREATE USER IF NOT EXISTS 'django'@'%' IDENTIFIED BY 'your_password';
         CREATE USER IF NOT EXISTS 'django'@'localhost' IDENTIFIED BY 'your_password';
         GRANT ALL PRIVILEGES ON \`Django_APP\`.* TO 'django'@'%';
