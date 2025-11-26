@@ -1,0 +1,36 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/transactions/transactions_confirm_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Confirmar Exclusão</h1>
+
+    <div class="form-container-card">
+      
+        <form method="post" class="delete-form-content">
+            {% csrf_token %}
+            
+            <div class="delete-icon">
+                <span class="material-symbols-outlined">warning</span>
+            </div>
+            
+            <div class="delete-message">
+                <p>Você tem certeza que quer excluir o lançamento abaixo?</p>
+                <p class="transaction-details">
+                    <strong>"{{ object.name }}"</strong> no valor de <strong class="danger">R$ {{ object.value|floatformat:2 }}</strong>
+                </p>
+                <p class="warning-text">Esta ação não pode ser desfeita.</p>
+            </div>
+            
+            <div class="form-actions delete-actions">
+                <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                <a href="{% url 'transactions:list' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

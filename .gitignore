@@ -1,0 +1,7 @@
+
+# arquivos estáticos e media
+staticfiles/
+mediafiles/
+
+#variaveis de ambiente
+.env

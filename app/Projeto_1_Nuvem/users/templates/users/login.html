@@ -1,0 +1,187 @@
+{% load static %}
+<!doctype html>
+<html lang="pt_BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <title>Login e Cadastro</title>
+</head>
+<body>
+
+  <main class="{% if active_form == 'register' %}sign-up-mode{% endif %}">
+    <div class="box">
+      <div class="inner-box">
+        <div class="forms-wrap">
+
+          <form class="sign-in" method="POST" autocomplete="off" novalidate>
+            {% csrf_token %}
+            <div class="logo">
+              <img src="{% static 'img/logo.png' %}" alt="Logo CoinClip">
+              <h3><span>coinclip</span></h3>
+            </div>
+            <div class="heading">
+              <h2>Entrar</h2>
+              <small>Ainda não registrado?</small>
+              <a href="#" class="toggle">Cadastre-se</a>
+            </div>
+            {% if messages %}
+              <div class="messages-container">
+                  {% for message in messages %}
+                      <div class="message {{ message.tags }}">
+                          {{ message }}
+                      </div>
+                  {% endfor %}
+              </div>
+            {% endif %}
+            {% if login_form.non_field_errors %}
+            <div class="form-errors">
+              {% for error in login_form.non_field_errors %}<small class="danger">{{ error }}</small>{% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-labels">
+              <div class="input-wrap {% if login_form.username.errors %}with-error{% endif %}">
+                {{ login_form.username }}
+                <label class="form-label" for="{{ login_form.username.id_for_label }}">Usuário</label>
+              </div>
+              {% if login_form.username.errors %}
+              <div class="error-container">
+                {% for error in login_form.username.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-wrap {% if login_form.password.errors %}with-error{% endif %}">
+                {{ login_form.password }}
+                <label class="form-label" for="{{ login_form.password.id_for_label }}">Senha</label>
+              </div>
+              {% if login_form.password.errors %}
+              <div class="error-container">
+                {% for error in login_form.password.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <input type="submit" class="sign-btn" name="submit_login" value="Login">
+            </div>
+          </form>
+
+          <form class="sign-up" method="POST" autocomplete="off" novalidate>
+            {% csrf_token %}
+            <div class="logo">
+              <img src="{% static 'img/logo.png' %}" alt="Logo CoinClip">
+              <h3><span>coinclip</span></h3>
+            </div>
+            <div class="heading">
+              <h2>Cadastre-se</h2>
+              <small>Já possui uma conta?</small>
+              <a href="#" class="toggle">Entre</a>
+            </div>
+            {% if register_form.non_field_errors %}
+            <div class="form-errors">
+              {% for error in register_form.non_field_errors %}<small class="danger">{{ error }}</small>{% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-labels">
+              <div class="input-wrap {% if register_form.first_name.errors %}with-error{% endif %}">
+                {{ register_form.first_name }}
+                <label class="form-label" for="{{ register_form.first_name.id_for_label }}">Nome</label>
+              </div>
+              {% if register_form.first_name.errors %}
+              <div class="error-container">
+                {% for error in register_form.first_name.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-wrap {% if register_form.last_name.errors %}with-error{% endif %}">
+                {{ register_form.last_name }}
+                <label class="form-label" for="{{ register_form.last_name.id_for_label }}">Sobrenome</label>
+              </div>
+              {% if register_form.last_name.errors %}
+              <div class="error-container">
+                {% for error in register_form.last_name.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-wrap {% if register_form.username.errors %}with-error{% endif %}">
+                {{ register_form.username }}
+                <label class="form-label" for="{{ register_form.username.id_for_label }}">Usuário</label>
+              </div>
+              {% if register_form.username.errors %}
+              <div class="error-container">
+                {% for error in register_form.username.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-wrap {% if register_form.email.errors %}with-error{% endif %}">
+                {{ register_form.email }}
+                <label class="form-label" for="{{ register_form.email.id_for_label }}">Email</label>
+              </div>
+              {% if register_form.email.errors %}
+              <div class="error-container">
+                {% for error in register_form.email.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+              
+              <div class="input-wrap {% if register_form.password1.errors %}with-error{% endif %}">
+                {{ register_form.password1 }}
+                <label class="form-label" for="{{ register_form.password1.id_for_label }}">Senha</label>
+              </div>
+              {% if register_form.password1.errors %}
+              <div class="error-container">
+                {% for error in register_form.password1.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-wrap {% if register_form.password2.errors %}with-error{% endif %}">
+                {{ register_form.password2 }}
+                <label class="form-label" for="{{ register_form.password2.id_for_label }}">Confirme sua senha</label>
+              </div>
+              {% if register_form.password2.errors %}
+              <div class="error-container">
+                {% for error in register_form.password2.errors %}<small class="danger error-message">{{ error }}</small>{% endfor %}
+              </div>
+              {% endif %}
+
+              <input type="submit" class="sign-btn" name="submit_register" value="Cadastre-se">
+            </div>
+          </form>
+        </div>
+
+        <div class="image">
+          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" alt="Imagem decorativa">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const inputs = document.querySelectorAll(".input-field");
+    const toggle_btn = document.querySelectorAll(".toggle");
+    const main = document.querySelector("main");
+
+    inputs.forEach((inp) => {
+      
+      if (inp.value !== "") {
+        inp.classList.add("active");
+      }
+
+      inp.addEventListener("focus", () =>{
+        inp.classList.add("active");
+      });
+
+      inp.addEventListener("blur", () => {
+
+        if (inp.value === "") {
+          inp.classList.remove("active");
+        }
+      });
+    });
+
+    toggle_btn.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        main.classList.toggle("sign-up-mode");
+      });
+    });
+  </script>
+</body>
+</html>

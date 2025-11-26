@@ -1,0 +1,39 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}{% if object %}Editar Lançamento{% else %}Adicionar Lançamento{% endif %}{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/transactions/transactions_form.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>{% if object %}Editar Lançamento{% else %}Adicionar Lançamento{% endif %}</h1>
+
+    {# Este é o contêiner principal que se parecerá com o da página de perfil #}
+    <div class="form-container-card">
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error-message">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar Lançamento</button>
+                <a href="{% url 'transactions:list' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,167 @@
+.header-with-action {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.header-with-action h1 {
+    margin: 0;
+}
+
+.header-with-action .btn-primary {
+    display: flex; 
+    align-items: center;
+    gap: 0.5rem;
+    width: auto; 
+    padding: 0.8rem 1.5rem; 
+    height: 45px; 
+}
+.header-with-action .btn-primary span {
+    font-size: 1.2rem;
+}
+
+
+.orders {
+    background: var(--color-white);
+    padding: var(--card-padding);
+    border-radius: var(--card-border-radius);
+    margin-top: 1rem;
+    box-shadow: var(--box-shadow);
+    transition: all 300ms ease;
+    margin-bottom: 30px;
+}
+
+.orders table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.orders table th,
+.orders table td {
+    border: none;
+    padding: 1rem; 
+}
+
+.orders table thead th {
+    color: var(--color-dark-variant);
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    border-bottom: 2px solid var(--color-light);
+}
+
+.orders table tbody tr {
+    border-bottom: 1px solid var(--color-light);
+    transition: background-color 300ms ease; 
+}
+
+
+.orders table tbody tr:hover {
+    background-color: var(--color-light);
+}
+
+.orders table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.orders table tbody td {
+    color: var(--color-dark-variant);
+}
+
+.orders table tbody td.success {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.orders table tbody td.danger {
+    color: var(--color-danger);
+    font-weight: 600;
+}
+
+.orders table tbody td.actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.5rem 1rem; 
+}
+
+.icon-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px; 
+    height: 35px;
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    transition: all 300ms ease;
+    text-decoration: none; 
+}
+
+.icon-btn span {
+    font-size: 1.2rem;
+}
+
+.icon-btn.warning {
+    background: var(--color-warning-light); 
+    color: var(--color-warning);
+}
+.icon-btn.warning:hover {
+    background: var(--color-warning);
+    color: var(--color-white);
+}
+
+.icon-btn.danger {
+    background: var(--color-danger-light); 
+    color: var(--color-danger);
+}
+.icon-btn.danger:hover {
+    background: var(--color-danger);
+    color: var(--color-white);
+}
+
+.profile-form-container p {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+.profile-form-container p strong {
+    color: var(--color-dark);
+}
+
+.form-actions .btn-danger {
+    background: var(--color-danger);
+    color: var(--color-white);
+    width: auto; 
+    padding: 0.8rem 1.5rem;
+}
+.form-actions .btn-danger:hover {
+    background: var(--color-dark-danger); 
+}
+
+.add-transaction-container {
+    width: 100%;
+    margin-top: 2.5rem; 
+    
+
+    display: flex;
+    justify-content: center;
+}
+
+.add-transaction-container .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    
+    width: auto; 
+    height: 50px;
+    padding: 0 2rem; 
+    
+    font-size: 1rem;
+    font-weight: 600;
+    
+    box-shadow: 0 10px 20px var(--color-light);
+}
+

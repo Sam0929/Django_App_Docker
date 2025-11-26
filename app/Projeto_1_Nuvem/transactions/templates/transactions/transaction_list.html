@@ -1,0 +1,71 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}Meus Lançamentos{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/transactions/transactions_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    
+    <div class="header-with-action">
+        <h1>Meus Lançamentos</h1>
+    </div>
+
+    <div class="orders">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.name }}</td>
+                        <td class="{% if transaction.is_income %}success{% else %}danger{% endif %}">
+                            R$ {{ transaction.value|floatformat:2 }}
+                        </td>
+                        <td>{{ transaction.created_at|date:"d/m/Y" }}</td>
+                        <td class="actions">
+                            <a href="{% url 'transactions:update' transaction.pk %}" class="icon-btn warning">
+                                <span class="material-symbols-outlined">edit</span>
+                            </a>
+                            <a href="{% url 'transactions:delete' transaction.pk %}" class="icon-btn danger">
+                                <span class="material-symbols-outlined">delete</span>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 2rem;">
+                            Você ainda não tem nenhum lançamento.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="add-transaction-container">
+        <a href="{% url 'transactions:create' %}" class="btn btn-primary">
+            <span class="material-symbols-outlined">add</span>
+            Adicionar Novo Lançamento
+        </a>
+    </div>
+
+{% endblock %}

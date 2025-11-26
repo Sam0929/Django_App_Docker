@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CoinClip{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/home_user.css' %}">
+    
+    {% block extra_head %}{% endblock %}  
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <a href="{% url 'users:home' %}" class="logo-link">
+                    <div class="logo">
+                        <img src="{% static 'img/logo.png' %}">
+                        <h2><span>Coinclip</span></h2>
+                    </div>
+                </a>
+                <div class="close" id="close-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <a href="{% url 'users:home' %}" class="active">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="{% url 'transactions:list' %}">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <h3>Lançamentos</h3>
+                </a>
+                <a href="{% url 'transactions:create' %}">
+                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                    <h3>Adicionar Lançamento</h3>
+                </a>
+                <a href="{% url 'users:profile' %}">
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                    <h3>Configurações</h3>
+                </a>
+                <a href="{% url 'users:logout' %}">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Sair</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            {% block content %}
+                {% comment %} O conteúdo de cada página específica será inserido aqui. {% endcomment %}
+            {% endblock %}
+        </main>
+        <div class="right">
+            <div class="top">
+                <button id="menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-outlined active">light_mode</span>
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Olá, <b>{{ user.first_name|default:user.username }}</b></p>
+                        {% if user.is_superuser %}
+                            <small class="text-muted">Administrador</small>
+                        {% else %}
+                            <small class="text-muted">Cliente</small>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'users:profile' %}" class="photo-link">
+                        <div class="profile-photo">
+                            <img src="{{ user.profile.avatar.url }}" alt="Foto do perfil">
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            {% if request.resolver_match.url_name == "home" %}
+            <div class="investor">
+                <h2>Mercado de Ações</h2>
+                {% for stock in stocks %}
+                    <div class="item">
+                        <div class="icon">
+                            {% if stock.changesPercentage > 0 %}
+                                <span class="material-symbols-outlined success">arrow_upward</span>
+                            {% else %}
+                                <span class="material-symbols-outlined danger">arrow_downward</span>
+                            {% endif %}
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>{{ stock.symbol }}</h3>
+                                <small class="text-muted">Últimas 24 horas</small>
+                            </div>
+                            {% if stock.changesPercentage > 0 %}
+                                <h5 class="success">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% else %}
+                                <h5 class="danger">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% endif %}
+                            <h3>{{ stock.price|floatformat:2 }}</h3>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted" style="padding: 1rem 0;">Nenhuma ação encontrada.</p>
+                {% endfor %}
+                
+                <div class="item add-stock">
+                    <span class="material-symbols-outlined">add</span>
+                    <a href="#">Adicionar Ação</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {{ stocks|json_script:"stocks-data" }}
+    <script>
+        
+        const stocksData = JSON.parse(document.getElementById('stocks-data').textContent);
+        console.log("Dados das Ações:", stocksData);
+        const themeToggler = document.querySelector(".theme-toggler");
+        themeToggler.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme-variables');
+            themeToggler.querySelector('span:nth-child(1)').classList.toggle('active');
+            themeToggler.querySelector('span:nth-child(2)').classList.toggle('active');
+        });
+    </script>
+
+   <script>
+        // Seleciona todos os links da sua sidebar
+        const links = document.querySelectorAll(".sidebar a");
+        
+        // Pega o caminho da URL atual (ex: "/users/home/")
+        const currentPath = window.location.pathname;
+
+        // --- PARTE 1: MARCAR O LINK ATIVO AO CARREGAR A PÁGINA ---
+        // Esta lógica garante que a página correta já comece com o link ativo.
+        links.forEach(link => {
+            // Compara o href do link com a URL atual
+            if (link.getAttribute("href") === currentPath) {
+                link.classList.add("active");
+            } else {
+                // Garante que outros links não tenham a classe 'active' por engano
+                link.classList.remove("active");
+            }
+        });
+
+    // --- PARTE 2: ADICIONAR A LÓGICA DE CLIQUE (O que você pediu) ---
+    // Itera sobre cada link para adicionar um "ouvinte de clique"
+        links.forEach(link => {
+            link.addEventListener('click', function(event) {
+                
+                // 1. Primeiro, remove a classe 'active' de TODOS os links da sidebar.
+                //    Isso garante que o link "anterior" seja desativado.
+                links.forEach(item => item.classList.remove('active'));
+
+                // 2. Depois, adiciona a classe 'active' APENAS ao link que foi clicado.
+                //    'event.currentTarget' se refere exatamente ao elemento que recebeu o clique.
+                event.currentTarget.classList.add('active');
+            });
+        });
+    </script>
+     
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

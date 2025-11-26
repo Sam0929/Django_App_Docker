@@ -1,0 +1,144 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - CoinClip{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+
+    <div class="date">
+        <input type="date">
+    </div>
+
+    <div class="insights">
+        <div class="balance">
+            <span class="material-symbols-outlined">analytics</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Balanço</h3>
+                    <h1>R$ {{ balance|floatformat:2 }}</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle class="track" cx="38" cy="38" r="36"></circle>
+                        <circle class="progress-circle-balance" cx="38" cy="38" r="36"></circle>
+                    </svg>
+                    <div class="number"><p id="balance-percent">0%</p></div>
+                </div>
+            </div>
+            <small class="text-muted">Últimas 24 horas</small>
+        </div>
+
+        <div class="incomes">
+            <span class="material-symbols-outlined">trending_up</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Entradas</h3>
+                    <h1>R$ {{ positiveTotal|floatformat:2 }}</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle class="track" cx="38" cy="38" r="36"></circle>
+                        <circle class="progress-circle-incomes" cx="38" cy="38" r="36"></circle>
+                    </svg>
+                    <div class="number">
+                        <p>{{ incomePercentage }}%</p>
+                    </div>
+                </div>
+            </div>
+            <small class="text-muted">Últimas 24 horas</small>
+        </div>
+
+        <div class="expenses">
+            <span class="material-symbols-outlined">trending_down</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Gastos</h3>
+                    <h1>R$ {{ negativeTotal|floatformat:2 }}</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle class="track" cx="38" cy="38" r="36"></circle>
+                        <circle class="progress-circle-expenses" cx="38" cy="38" r="36"></circle>
+                    </svg>
+                    <div class="number">
+                        <p>{{ expensePercentage }}%</p>
+                    </div>
+                </div>
+            </div>
+            <small class="text-muted">Últimas 24 horas</small>
+        </div>
+    </div>
+
+    <div class="orders">
+        <h2>Lançamentos Recentes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in data_transactions %}
+                    <tr>
+                        <td>{{ transaction.name }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td class="{% if transaction.is_income %}success{% else %}danger{% endif %}">
+                            R$ {{ transaction.value|floatformat:2 }}
+                        </td>
+                        <td class="primary">Detalhes</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 1rem;">Nenhum lançamento encontrado</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="#">Mostrar mais</a>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function setCircleProgress(selector, percent) {
+            const circle = document.querySelector(selector);
+            if (!circle) return;
+
+            const r = parseFloat(circle.getAttribute('r') || '0');
+            const circumference = 2 * Math.PI * r;
+            const p = Math.max(0, Math.min(100, Number(percent) || 0));
+
+            // usar 2 valores no dasharray ajuda a não “encher tudo”
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = `${circumference - (p / 100) * circumference}`;
+
+            const track = circle.parentElement.querySelector('.track');
+            if (track) {
+                track.style.strokeDasharray = `${circumference} ${circumference}`;
+                track.style.strokeDashoffset = '0';
+            }
+        }
+
+        // porcentagem do balanço em relação às entradas
+        const balanceVal = parseFloat(("{{ balance|default:0 }}").toString().replace(',', '.'));
+        const incomesVal = parseFloat(("{{ positiveTotal|default:0 }}").toString().replace(',', '.'));
+
+        let balancePct = 0;
+        if (incomesVal > 0) balancePct = (balanceVal / incomesVal) * 100;
+
+        // limita o anel entre 0 e 100
+        const ringPct = Math.max(0, Math.min(100, balancePct));
+        setCircleProgress('.progress-circle-balance', ringPct);
+
+        const balancePctEl = document.querySelector('#balance-percent');
+        if (balancePctEl) balancePctEl.textContent = `${Math.max(0, balancePct).toFixed(0)}%`;
+
+        // mantém os outros dois
+        setCircleProgress('.progress-circle-incomes', parseFloat(("{{ incomePercentage|default:0 }}").toString().replace(',', '.')));
+        setCircleProgress('.progress-circle-expenses', parseFloat(("{{ expensePercentage|default:0 }}").toString().replace(',', '.')));
+    });
+    </script>
+{% endblock %}
