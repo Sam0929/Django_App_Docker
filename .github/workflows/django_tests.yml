@@ -37,32 +37,27 @@ jobs:
       run: |
         docker compose up -d
     
-    - name: Wait for MySQL to be ready (improved)
+    - name: Wait for MySQL to be ready
       run: |
-        for i in {1..30}; do
-          echo "Tentativa $i/30..."
-          docker compose exec -T db mysqladmin ping -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" && break
+        for i in {1..60}; do
+          echo "Tentativa $i/60..."
+          docker compose exec -T db sh -c 'mysqladmin ping -h localhost -u root -p"your_root_password" --silent' && break
           sleep 2
         done
-      timeout-minutes: 2
+      timeout-minutes: 3
     
-    - name: Wait for Django container to be ready
-      run: |
-        docker compose exec -T web sh -c 'for i in {1..20}; do python manage.py check && break || (echo "Tentativa $i/20" && sleep 2); done'
-      timeout-minutes: 2
+    - name: Sleep extra time to ensure MySQL is fully initialized
+      run: sleep 5
     
     - name: Grant permissions to Django user
       run: |
-        docker compose exec -T db mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" << EOF
-        GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
-        GRANT ALL PRIVILEGES ON \`test_${DB_NAME}\`.* TO '${DB_USER}'@'%';
-        GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
-        GRANT ALL PRIVILEGES ON \`test_${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
+        docker compose exec -T db mysql -h localhost -u root -p"your_root_password" << EOF
+        GRANT ALL PRIVILEGES ON \`Django_APP\`.* TO 'django'@'%';
+        GRANT ALL PRIVILEGES ON \`test_Django_APP\`.* TO 'django'@'%';
+        GRANT ALL PRIVILEGES ON \`Django_APP\`.* TO 'django'@'localhost';
+        GRANT ALL PRIVILEGES ON \`test_Django_APP\`.* TO 'django'@'localhost';
         FLUSH PRIVILEGES;
         EOF
-      env:
-        DB_NAME: Django_APP
-        DB_USER: django
       timeout-minutes: 1
     
     - name: Run migrations in container
