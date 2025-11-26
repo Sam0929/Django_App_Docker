@@ -1,0 +1,101 @@
+name: Django Tests with Docker Compose
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Create .env file for tests
+      run: |
+        cat > .env << EOF
+        # Database Configuration
+        DB_ENGINE=django.db.backends.mysql
+        DB_NAME=django_test
+        DB_USER=django_user
+        DB_PASSWORD=django_pass
+        DB_HOST=db
+        DB_PORT=3306
+        MYSQL_ROOT_PASSWORD=rootpassword
+        
+        # Django Configuration
+        SECRET_KEY=test-secret-key-change-in-production
+        DEBUG=True
+        DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,web
+        
+        # Email Configuration
+        EMAIL_USER=test@example.com
+        EMAIL_PASSWORD=testpassword
+        
+        # Social Auth Configuration
+        GITHUB_KEY=test_github_key
+        GITHUB_SECRET=test_github_secret
+        GOOGLE_KEY=test_google_key
+        GOOGLE_SECRET=test_google_secret
+        EOF
+    
+    - name: Start containers with docker-compose
+      run: |
+        docker-compose up -d
+        
+    - name: Wait for MySQL to be ready
+      run: |
+        docker-compose exec -T db sh -c 'while ! mysqladmin ping -h localhost -u django_user -p"$DB_PASSWORD" --silent; do sleep 1; done'
+      env:
+        DB_PASSWORD: django_pass
+    
+    - name: Install dependencies in container
+      run: |
+        docker-compose exec -T web pip install coverage
+    
+    - name: Run migrations in container
+      run: |
+        docker-compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && python manage.py migrate'
+    
+    - name: Run Unit Tests
+      run: |
+        docker-compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && python manage.py test users.test_models transactions.test_models users.test_views transactions.test_views --verbosity=2'
+    
+    - name: Run Integration Tests
+      run: |
+        docker-compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && python manage.py test test_integration test_additional_integration --verbosity=2'
+    
+    - name: Run tests with coverage
+      run: |
+        docker-compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && coverage run --source="." manage.py test && coverage report && coverage xml'
+    
+    - name: Copy coverage report from container
+      if: always()
+      run: |
+        docker-compose cp web:/app/Projeto_1_Nuvem/coverage.xml ./coverage.xml || true
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+    
+    - name: Archive test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          coverage.xml
+    
+    - name: Stop and clean up containers
+      if: always()
+      run: |
+        docker-compose down -v

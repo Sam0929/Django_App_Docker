@@ -19,3 +19,8 @@ social-auth-app-django
 social-auth-core
 sqlparse
 urllib3
+# Testing dependencies
+coverage
+pytest
+pytest-django
+factory-boy
