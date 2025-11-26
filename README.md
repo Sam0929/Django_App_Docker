@@ -19,17 +19,17 @@ cp .env.example .env
 
 ### 2. Construir e Subir os Containers
 ```sh
-cp .env.example .env
+docker-compose up -d --build
 ```
 
 ### 3. Criar as Tabelas no Banco de Dados
 ```sh
-cp .env.example .env
+docker-compose exec web python manage.py migrate
 ```
 
 ### 4. Configurar Arquivos Estáticos (CSS/JS)
 ```sh
-cp .env.example .env
+docker-compose exec web python manage.py collectstatic --no-input
 ```
 
 ### 5. Configurar Mídia Padrão
@@ -39,7 +39,7 @@ docker cp ./app/Projeto_1_Nuvem/default.jpg coinflip_web:/app/mediafiles/default
 
 ### 6. Criar Superusuário (Admin)
 ```sh
-docker cp ./app/Projeto_1_Nuvem/default.jpg coinflip_web:/app/mediafiles/default.jpg
+docker-compose exec web python manage.py createsuperuser
 ```
 
 ### 7. Acesse a aplicação
