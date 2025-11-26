@@ -36,12 +36,19 @@ jobs:
     - name: Start containers with docker-compose
       run: |
         docker compose up -d
-        
-    - name: Wait for MySQL to be ready
+    
+    - name: Wait for MySQL to be ready (improved)
       run: |
-        docker compose exec -T db sh -c 'while ! mysqladmin ping -h localhost -u root -p"${MYSQL_ROOT_PASSWORD}" --silent; do sleep 1; done'
-      env:
-        MYSQL_ROOT_PASSWORD: your_root_password
+        for i in {1..30}; do
+          echo "Tentativa $i/30..."
+          docker compose exec -T db mysqladmin ping -h localhost -u root -p"your_root_password" && break
+          sleep 2
+        done
+      timeout-minutes: 2
+    
+    - name: Wait for Django container to be ready
+      run: |
+        docker compose exec -T web sh -c 'for i in {1..20}; do python manage.py check && break || (echo "Tentativa $i/20" && sleep 2); done'
       timeout-minutes: 2
     
     - name: Install dependencies in container
