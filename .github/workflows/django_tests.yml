@@ -39,9 +39,10 @@ jobs:
         
     - name: Wait for MySQL to be ready
       run: |
-        docker compose exec -T db sh -c 'while ! mysqladmin ping -h localhost -u django_user -p"$DB_PASSWORD" --silent; do sleep 1; done'
+        docker compose exec -T db sh -c 'while ! mysqladmin ping -h localhost -u root -p"${MYSQL_ROOT_PASSWORD}" --silent; do sleep 1; done'
       env:
-        DB_PASSWORD: django_pass
+        MYSQL_ROOT_PASSWORD: your_root_password
+      timeout-minutes: 2
     
     - name: Install dependencies in container
       run: |
