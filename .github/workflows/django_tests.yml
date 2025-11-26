@@ -53,7 +53,7 @@ jobs:
     
     - name: Grant permissions to Django user
       run: |
-        docker compose exec -T db mysql -h localhost -u root -p"your_root_password" << EOF
+        docker compose exec -T db mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" << EOF
         GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
         GRANT ALL PRIVILEGES ON \`test_${DB_NAME}\`.* TO '${DB_USER}'@'%';
         GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
