@@ -37,11 +37,11 @@ jobs:
       run: |
         docker compose up -d
     
-    - name: Wait for MySQL to be ready (improved)
+    - name: Wait for MySQL to be ready
       run: |
         for i in {1..30}; do
           echo "Tentativa $i/30..."
-          docker compose exec -T db mysqladmin ping -h localhost -u root -p"your_root_password" && break
+          docker compose exec -T db sh -c 'nc -z localhost 3306 && echo "MySQL ready"' && break
           sleep 2
         done
       timeout-minutes: 2
@@ -51,9 +51,19 @@ jobs:
         docker compose exec -T web sh -c 'for i in {1..20}; do python manage.py check && break || (echo "Tentativa $i/20" && sleep 2); done'
       timeout-minutes: 2
     
-    - name: Install dependencies in container
+    - name: Grant permissions to Django user
       run: |
-        docker compose exec -T web pip install coverage
+        docker compose exec -T db mysql -h localhost -u root -p"your_root_password" << EOF
+        GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
+        GRANT ALL PRIVILEGES ON \`test_${DB_NAME}\`.* TO '${DB_USER}'@'%';
+        GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
+        GRANT ALL PRIVILEGES ON \`test_${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
+        FLUSH PRIVILEGES;
+        EOF
+      env:
+        DB_NAME: Django_APP
+        DB_USER: django
+      timeout-minutes: 1
     
     - name: Run migrations in container
       run: |
