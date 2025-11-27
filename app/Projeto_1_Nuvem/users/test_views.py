@@ -114,14 +114,12 @@ class ProfileViewTestCase(TestCase):
         self.client.login(username='profileuser', password='testpass123')
         
         response = self.client.post(reverse('users:profile'), {
-            'first_name': 'Test',
-            'last_name': 'User',
             'email': 'newemail@example.com',
             'bio': 'Updated bio'
         })
         
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, 'Test')
+        self.assertEqual(self.user.bio, 'Updated bio')
         self.assertEqual(self.user.email, 'newemail@example.com')
 
 
