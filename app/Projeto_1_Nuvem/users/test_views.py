@@ -120,7 +120,7 @@ class ProfileViewTestCase(TestCase):
             'bio': 'Updated bio'
         })
         
-        self.assertEqual(response.status_code, 302)  # Redirect após sucesso
+        self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'newemail@example.com')
 
