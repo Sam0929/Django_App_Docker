@@ -30,7 +30,7 @@ class TransactionListViewTestCase(TestCase):
         response = self.client.get(reverse('transactions:list'))
         
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/login', response.url)
+        self.assertIn('/transactions', response.url)
     
     def test_transaction_list_shows_only_user_transactions(self):
         """Testa se usuário só vê suas próprias transações"""

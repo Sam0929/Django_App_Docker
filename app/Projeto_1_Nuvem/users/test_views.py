@@ -43,6 +43,8 @@ class LoginAndRegisterViewTestCase(TestCase):
         """Testa registro bem-sucedido"""
         response = self.client.post(reverse('users:login'), {
             'submit_register': 'Submit',
+            'first_name': 'John',
+            'last_name': 'Doe',
             'username': 'newuser',
             'email': 'newuser@example.com',
             'password1': 'complexpass123!',
