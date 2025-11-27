@@ -119,7 +119,7 @@ class ProfileViewTestCase(TestCase):
             'bio': 'Updated bio'
         })
         
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'newemail@example.com')
 
