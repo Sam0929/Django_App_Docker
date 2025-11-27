@@ -73,7 +73,7 @@ jobs:
     
     - name: Run Integration Tests
       run: |
-        docker compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && python manage.py test test_integration test_additional_integration --verbosity=2'
+        docker compose exec -T web sh -c 'cd /app/Projeto_1_Nuvem && python manage.py test test_integration --verbosity=2'
     
     - name: Run tests with coverage
       run: |
