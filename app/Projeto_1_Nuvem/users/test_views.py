@@ -114,8 +114,7 @@ class ProfileViewTestCase(TestCase):
         self.client.login(username='profileuser', password='testpass123')
         
         response = self.client.post(reverse('users:profile'), {
-            'first_name': 'Profile',
-            'last_name': 'User',
+            'username': 'profileuser',
             'email': 'newemail@example.com',
             'bio': 'Updated bio'
         })
