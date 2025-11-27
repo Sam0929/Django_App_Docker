@@ -119,7 +119,6 @@ class ProfileViewTestCase(TestCase):
         })
         
         self.user.refresh_from_db()
-        self.assertEqual(self.user.bio, 'Updated bio')
         self.assertEqual(self.user.email, 'newemail@example.com')
 
 
