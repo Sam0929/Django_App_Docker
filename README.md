@@ -10,7 +10,7 @@ Este projeto roda uma aplicação Django completa utilizando Docker Compose, orq
 
 ## 🚀 Instalação e Inicialização
 
-Siga os passos abaixo na ordem exata para configurar o ambiente pela primeira vez.
+Siga os passos abaixo na ordem exata para configurar o ambiente pela primeira vez
 
 ### 1. Configurar Variáveis de Ambiente
 ```sh
